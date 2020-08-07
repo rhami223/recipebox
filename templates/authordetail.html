@@ -1,0 +1,9 @@
+<h1>Author</h1>
+<h3>{{author.name}}</h3>
+<h4>{{author.bio}}</h4>
+<h4>my recipes</h4>
+<ul>
+    {%for recipe in recipes%}
+    <li><a href='/recipes/{{recipe.id}}'>{{recipe.title}}</a></li>
+    {%endfor%}    
+</ul>
