@@ -60,6 +60,47 @@ def add_recipe(request):
     form = AddRecipe()
     return render(request, "generic_form.html", {"form": form}) 
 
+@login_required
+def edit_recipe_view(request, recipe_id):
+    recipe = Recipe.objects.get(id=recipe_id)
+    if request.method == "POST":
+        form = AddRecipe(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            recipe.title=data["title"]
+            recipe.author=data["author"]
+            recipe.time_required=data["time_required"]
+            recipe.description=data["description"]
+            recipe.instructions=data["instructions"]
+            recipe.save()
+            return HttpResponseRedirect(reverse('recipe_detail_view', args=[recipe.id]))
+    data = {
+        "title": recipe.title,
+        "author": recipe.author,
+        "time_required": recipe.time_required,
+        "description": recipe.description,
+        "instructions": recipe.instructions
+
+    }
+    form = AddRecipe(initial=data)
+    return render(request, "generic_form.html", {"form": form})
+
+
+def favorite_view(request, fav_id):
+    signed_in_user = Author.objects.get(username=request.user.username)
+    add_fav_recipe = Author.objects.filter(id=fav_id).first()
+    signed_in_user.favorite.add(add_fav_recipe)
+    signed_in_user.save()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+
+def unfavorite_view(request, unfav_id):
+    signed_in_user = Author.objects.get(username=request.user.username)
+    un_fav_recipe = Author.objects.filter(id=unfav_id).first()
+    signed_in_user.favorite.remove(un_fav_recipe)
+    signed_in_user.save()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
 
 def login_view(request):
     if request.method == "POST":

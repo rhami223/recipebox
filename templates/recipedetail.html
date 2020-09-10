@@ -6,3 +6,7 @@
 <p>time required: {{recipe.time_required}}</p>
 <h4>instructions</h4>
 <p>{{recipe.instructions}}</p>
+
+<a href="/edit_recipe_view/{{recipe.id}}/edit/">Edit</a>
+<a href="/follow_view/{{current_user.id}}/">like</a>
+<a href="/unfollow_view/{{current_user.id}}/">Unlike</a>
