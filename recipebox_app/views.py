@@ -16,9 +16,10 @@ def recipe_detail_view(request, recipe_id):
     return render(request, 'recipedetail.html', {"recipe": recipe_list})
 
 def author_detail_view(request, author_id):
-    author = Author.objects.filter(id= author_id).first()
-    recipe = Recipe.objects.filter(author=author.id)
-    return render(request, "authordetail.html", {"author": author, 'recipes': recipe})
+    wanted_author = Author.objects.filter(id=author_id).first()
+    recipe = Recipe.objects.filter(author=wanted_author.id)
+    fav_list = wanted_author.favorite.all()
+    return render(request, "authordetail.html", {"author": wanted_author, 'recipes': recipe, "favorites": fav_list})
 
 @login_required
 def add_author(request):
@@ -63,42 +64,45 @@ def add_recipe(request):
 @login_required
 def edit_recipe_view(request, recipe_id):
     recipe = Recipe.objects.get(id=recipe_id)
-    if request.method == "POST":
-        form = AddRecipe(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            recipe.title=data["title"]
-            recipe.author=data["author"]
-            recipe.time_required=data["time_required"]
-            recipe.description=data["description"]
-            recipe.instructions=data["instructions"]
-            recipe.save()
-            return HttpResponseRedirect(reverse('recipe_detail_view', args=[recipe.id]))
-    data = {
-        "title": recipe.title,
-        "author": recipe.author,
-        "time_required": recipe.time_required,
-        "description": recipe.description,
-        "instructions": recipe.instructions
+    if request.user.is_staff or request.user.author.id == recipe.author.id:
+        if request.method == "POST":
+            form = AddRecipe(request.POST)
+            if form.is_valid():
+                data = form.cleaned_data
+                recipe.title=data["title"]
+                recipe.author=data["author"]
+                recipe.time_required=data["time_required"]
+                recipe.description=data["description"]
+                recipe.instructions=data["instructions"]
+                recipe.save()
+                return HttpResponseRedirect(reverse('recipe_detail_view', args=[recipe.id]))
+        data = {
+            "title": recipe.title,
+            "author": recipe.author,
+            "time_required": recipe.time_required,
+            "description": recipe.description,
+            "instructions": recipe.instructions
 
-    }
-    form = AddRecipe(initial=data)
-    return render(request, "generic_form.html", {"form": form})
+        }
+        form = AddRecipe(initial=data)
+        return render(request, "generic_form.html", {"form": form})
+    return HttpResponseRedirect(reverse('homepage', args=[recipe.id]))
+    
 
 
 def favorite_view(request, fav_id):
-    signed_in_user = Author.objects.get(username=request.user.username)
-    add_fav_recipe = Author.objects.filter(id=fav_id).first()
-    signed_in_user.favorite.add(add_fav_recipe)
-    signed_in_user.save()
+    current_author = Author.objects.filter(user__id=request.user.id).first()
+    add_fav_recipe = Recipe.objects.filter(id=fav_id).first()
+    current_author.favorite.add(add_fav_recipe)
+    current_author.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
 def unfavorite_view(request, unfav_id):
-    signed_in_user = Author.objects.get(username=request.user.username)
-    un_fav_recipe = Author.objects.filter(id=unfav_id).first()
-    signed_in_user.favorite.remove(un_fav_recipe)
-    signed_in_user.save()
+    current_author = Author.objects.filter(user__id=request.user.id).first()
+    un_fav_recipe = Recipe.objects.filter(id=unfav_id).first()
+    current_author.favorite.remove(un_fav_recipe)
+    current_author.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 

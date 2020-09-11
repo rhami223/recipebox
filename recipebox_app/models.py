@@ -22,7 +22,7 @@ class Author(models.Model):
     name = models.CharField(max_length=80)
     bio = models.TextField()
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    favorite = models.ManyToManyField('Recipe', related_name='favorite', symmetrical=False)
+    favorite = models.ManyToManyField('Recipe', related_name='favorite',blank=True, symmetrical=False)
 
     def __str__(self):
         return self.name 

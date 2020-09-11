@@ -28,8 +28,8 @@ path('addauthor/', views.add_author),
 path('addrecipe/', views.add_recipe),
 path('login/', views.login_view, name="loginview"),
 path('logout/', views.logout_view, name="logout"),
-path('favorite_view/<int:fav_id>', views.favorite_view, name="like"),
-path('unfavorite_view/<int:unfav_id', views.unfavorite_view, name="unlike"),
+path('favorite_view/<int:fav_id>/', views.favorite_view, name="fav"),
+path('unfavorite_view/<int:unfav_id>/', views.unfavorite_view, name="unfav"),
 path('admin/', admin.site.urls),
 
 

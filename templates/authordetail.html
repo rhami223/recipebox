@@ -7,3 +7,10 @@
     <li><a href='/recipes/{{recipe.id}}'>{{recipe.title}}</a></li>
     {%endfor%}    
 </ul>
+
+    Fav Recipes
+    <ul>
+        {% for favorite in favorites %}
+            <ul><a href="/recipes/{{ Favorites.recipe.id }}/">{{favorite}}</a></ul>
+        {% endfor %}
+    </ul>
