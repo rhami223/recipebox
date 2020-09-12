@@ -15,6 +15,7 @@ def recipe_detail_view(request, recipe_id):
     recipe_list = Recipe.objects.filter(id=recipe_id).first()
     return render(request, 'recipedetail.html', {"recipe": recipe_list})
 
+# helped by matt perry, peter marsh, michael demory, detrich
 def author_detail_view(request, author_id):
     wanted_author = Author.objects.filter(id=author_id).first()
     recipe = Recipe.objects.filter(author=wanted_author.id)
@@ -61,6 +62,7 @@ def add_recipe(request):
     form = AddRecipe()
     return render(request, "generic_form.html", {"form": form}) 
 
+# helped by matt perry, peter marsh, michael demory, detrich, joe kaufeld (demo)
 @login_required
 def edit_recipe_view(request, recipe_id):
     recipe = Recipe.objects.get(id=recipe_id)
@@ -89,7 +91,7 @@ def edit_recipe_view(request, recipe_id):
     return HttpResponseRedirect(reverse('homepage', args=[recipe.id]))
     
 
-
+# helped michael demory
 def favorite_view(request, fav_id):
     current_author = Author.objects.filter(user__id=request.user.id).first()
     add_fav_recipe = Recipe.objects.filter(id=fav_id).first()
@@ -97,7 +99,7 @@ def favorite_view(request, fav_id):
     current_author.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-
+# helped by michael demory
 def unfavorite_view(request, unfav_id):
     current_author = Author.objects.filter(user__id=request.user.id).first()
     un_fav_recipe = Recipe.objects.filter(id=unfav_id).first()
