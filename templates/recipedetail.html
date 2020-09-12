@@ -8,6 +8,8 @@
 <p>{{recipe.instructions}}</p>
 
 <a href="/edit_recipe_view/{{recipe.id}}/edit/">Edit</a>
+{% if user.is_authenticated %}
 <a href="/favorite_view/{{recipe.id}}/">fav</a>
 <a href="/unfavorite_view/{{recipe.id}}/">Unfav</a>
+{% endif %}
 <a href="/">homepage</a>
